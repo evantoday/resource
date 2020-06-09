@@ -100,11 +100,8 @@ automate-recon (){ #> automate-recon target.com
 
 
 	# WebAnalyzer
-<<<<<<< HEAD
 	webanalyze -worker 10 -hosts httprobes.out -output csv | tee webanalyzes.out;
-=======
 	webanalyze -apps /root/resource/apps.json -worker 10 -hosts httprobes.out -output csv | tee webanalyzes.out;
->>>>>>> .
 
 
 	# Taking screenshots
@@ -193,37 +190,28 @@ automate-testing (){
 	time parallel -j 50 --tag host {1} {2} :::: $1_cnames ::: 8.8.8.8 1.1.1.1 8.8.4.4 | tee ./automationtesting/takeover-dnslookup;
 	cat takeover-dnslookup | grep "NXDOMAIN" | awk '{print $4$7}' | tee ./automationtesting/takeover-NXDOMAIN; 
 
-<<<<<<< HEAD
 	subjack -w $1_cnames -timeout 30 -ssl -o subjack-results -c /root/subjack-fingerprints.json -v 3; 
-=======
 	subjack -w $1_cnames -timeout 30 -ssl -o subjack-results -c /root/resource/subjack-fingerprints.json -v 3; 
->>>>>>> .
 	cat subjack-results | awk '$0 !~ /Not Vulnerable/' | tee ./automationtesting/takeover-subjack;
 
 
 	# CRLF Injection > XSS, Cache-Poisoning
-<<<<<<< HEAD
 	nuclei -t /root/nuclei-templates/vulnerabilities/crlf-injection.yaml -l httprobes.out -c 40 -silent -o ./automationtesting/crlf-vuln;
 
 
 	# Host Header Injection (x-forwarded-host) > Open Redirect
 	nuclei -t /root/nuclei-templates/vulnerabilities/x-forwarded-host-injection.yaml -l httprobes.out -c 40 -silent -o \
-=======
 	nuclei -t /root/resource/nuclei-templates/vulnerabilities/crlf-injection.yaml -l httprobes.out -c 40 -silent -o ./automationtesting/crlf-vuln;
 
 
 	# Host Header Injection (x-forwarded-host) > Open Redirect
 	nuclei -t /root/resource/nuclei-templates/vulnerabilities/x-forwarded-host-injection.yaml -l httprobes.out -c 40 -silent -o \
->>>>>>> .
 	./automationtesting/hostheaderinjection-vuln;
 
 
 	# CORS Misconfig
-<<<<<<< HEAD
 	nuclei -t /root/nuclei-templates/security-misconfiguration/basic-cors.yaml -l httprobes.out -c 40 -silent -o ./automationtesting/cors-vuln;
-=======
 	nuclei -t /root/resource/nuclei-templates/security-misconfiguration/basic-cors.yaml -l httprobes.out -c 40 -silent -o ./automationtesting/cors-vuln;
->>>>>>> .
 
 
 	# Unrestricted PUT method 
@@ -234,11 +222,8 @@ automate-testing (){
 	rm -rf ./out put.txt hosts;
 
 	# Open Redirect > SSRF
-<<<<<<< HEAD
 	nuclei -t /root/nuclei-templates/security-misconfiguration/open-redirect.yaml -l httprobes.out -c 40 -silent -o ./automationtesting/cors-vuln
-=======
 	nuclei -t /root/resource/nuclei-templates/security-misconfiguration/open-redirect.yaml -l httprobes.out -c 40 -silent -o ./automationtesting/cors-vuln
->>>>>>> .
 
 	# Directory Traversal | File inclusion
 
@@ -262,19 +247,16 @@ automate-testing (){
 
 	# Juicy Path & Endpoint Bruteforce
 	cat httprobes.out | parallel -j 10 --bar --shuf gobuster dir -u {} -t 20 \
-<<<<<<< HEAD
 	-w /root/wordlist/dir/dirsearch.txt -l -e -r -k -q | tee ./automationtesting/gobuster;
 
 
 	# Other > Custom pattern
 		# nuclei -t /root/nuclei-templates/template/ -l httprobes.out -c 40 -silent -o <results>
-=======
 	-w /root/resource/wordlist/dir/dirsearch.txt -l -e -r -k -q | tee ./automationtesting/gobuster;
 
 
 	# Other > Custom pattern
 		# nuclei -t /root/resource/nuclei-templates/template/ -l httprobes.out -c 40 -silent -o <results>
->>>>>>> .
 		# >> New CVE, etc
 
 }
