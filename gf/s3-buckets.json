@@ -1,0 +1,7 @@
+{
+    "flags": "-HanriE",
+    "patterns": [
+        "amazonaws.com",
+        "s3"
+    ]
+}
