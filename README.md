@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 # resource
-Automated reconnaissance wrapper - collecting juicy data &amp; basic security testing (fuzzing)
-=======
->>>>>>> .
 ***bash_profile*** :: Automated reconnaissance wrapper - collecting juicy data & basic security testing (fuzzing)
 ```bash
 # Dependencies
@@ -71,7 +65,3 @@ unfurl, dalfox, gobuster, nuclei, subjack, retire.js
    --> ./automationtesting/gobuster.txt
 13.Other -- Custom nuclei Pattern : New CVE&advisores, etc
 ```
-<<<<<<< HEAD
-=======
->>>>>>> resources
->>>>>>> .
