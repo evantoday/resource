@@ -22,12 +22,12 @@ unfurl, dalfox, gobuster, nuclei, subjack, retire.js
 - ./URLs/allurls.txt                   -- Fetch url from WebArchive, CommonCrawl, UrlScanIO
 - ./URLs/allurls-juicy-httprobes.txt   -- Removing duplicate parameter, junk uri + probing
 - ./URLs/params-uniq-live.txt          -- Live (200 OK) unique parameter uri list
-- ./gf-juicydata/gf-fileinclusion      -- gf fileinclusion pattern from params-uniq-live.txt
-- ./gf-juicydata/gf-redirect           -- gf redirect pattern from params-uniq-live.txt
-- ./gf-juicydata/gf-idor               -- gf idor pattern from params-uniq-live.txt
-- ./gf-juicydata/gf-sqli               -- gf sqli pattern from params-uniq-live.txt
-- ./gf-juicydata/gf-ssrf               -- gf ssrf pattern from params-uniq-live.txt
-- ./gf-juicydata/gf-ssti               -- gf ssti pattern from params-uniq-live.txt
+- ./gf-juicydata/fuzz-fileinclusion    -- gf fileinclusion pattern from params-uniq-live.txt
+- ./gf-juicydata/fuzz-openredirect     -- gf redirect pattern from params-uniq-live.txt
+- ./gf-juicydata/fuzz-idor             -- gf idor pattern from params-uniq-live.txt
+- ./gf-juicydata/fuzz-sqli             -- gf sqli pattern from params-uniq-live.txt
+- ./gf-juicydata/fuzz-ssrf             -- gf ssrf pattern from params-uniq-live.txt
+- ./gf-juicydata/fuzz-ssti             -- gf ssti pattern from params-uniq-live.txt
 - ./juicyfiles/200-allurlsjuicy.out    -- Juicy files (js,json,toml,etc) from allurls.txt
 - ./juicyfiles/200-getjscrawling.out   -- Juicy files (js,json,toml,etc) from active crawling ./URLs/allurls-juicy-httprobes.txt
 - ./juicyfiles/alljuicyfiles.out       -- Juicy files 200-allurlsjuicy.out + 200-getjscrawling.out
