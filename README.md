@@ -5,7 +5,7 @@ sudomy, httprobe, httpx, gowitness, naabu, dnsprobe, js-beautify, meg, gf, getJS
 unfurl, dalfox, gobuster, nuclei, subjack, retire.js
 ```
 ## Output List
-### Reconnaissance & Collecting Data Stage 
+### Reconnaissance & Collecting Juicy Data 
 ```bash
 - subdomain.out         -- subdomain list
 - subdomain-resolv.out  -- subdomain resolv result
@@ -58,11 +58,13 @@ unfurl, dalfox, gobuster, nuclei, subjack, retire.js
 9. XSS (Blind, Reflected, DOM)
    --> ./automationtesting/xss-reflected
    --> ./automationtesting/xss-dom[none]
-10. SSTI data from webanalyze 
+10.SSTI data from webanalyze 
    --> [none]
-11. SQLI Fuzzing
+11.SQLI Fuzzing
    --> [none]
-12. Juicy Path & Endpoint Bruteforce
+12.Command Injection
+   --> [none]
+13.Juicy Path & Endpoint Bruteforce
    --> ./automationtesting/gobuster.txt
-13.Other -- Custom nuclei Pattern : New CVE&advisores, etc
+14.Other -- Custom nuclei Pattern : New CVE&advisores, etc
 ```
