@@ -28,7 +28,6 @@ unfurl, dalfox, gobuster, nuclei, subjack, retire.js
 - ./gf-juicydata/gf-sqli               -- gf sqli pattern from params-uniq-live.txt
 - ./gf-juicydata/gf-ssrf               -- gf ssrf pattern from params-uniq-live.txt
 - ./gf-juicydata/gf-ssti               -- gf ssti pattern from params-uniq-live.txt
-- ./juicyfiles/juicyfiles-httpx.out    -- Juicy files uri from ./URLs/allurls-juicy.txt + probing
 - ./juicyfiles/200-allurlsjuicy.out    -- Juicy files (js,json,toml,etc) from allurls.txt
 - ./juicyfiles/200-getjscrawling.out   -- Juicy files (js,json,toml,etc) from active crawling ./URLs/allurls-juicy-httprobes.txt
 - ./juicyfiles/alljuicyfiles.out       -- Juicy files 200-allurlsjuicy.out + 200-getjscrawling.out
