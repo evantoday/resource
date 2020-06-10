@@ -1,6 +1,5 @@
 # Automated reconnaissance wrapper - collecting juicy data & basic security testing (fuzzing)
 
-
 ## Delete junk subdomain - parameter/uri
    ## sed '/.blog.amikom.ac.id/d' subdomain.out > temp && mv temp subdomain.out;
    ## sed '/.blog.amikom.ac.id/d' ./URLs/allurls-temp.txt > temp && mv temp ./URLs/allurls-temp.txt;
@@ -13,8 +12,7 @@ automate-recon (){ #> automate-recon target.com
 
 	# Enumerating subdomains + subdomain IP resolv +  collecting open port ip lists from shodan + collecting URLs
 	  # Other source : https://chaos.projectdiscovery.io/#/ | fdnsdataset
-	  # sudomy v1.1.6
-	  sudomyy -eP -dP -rS -d $1 --no-probe -o $1_sub; # alias sudomyy="/root/sudomy/./sudomy >> .bashrc
+	  sudomyy -eP -dP -rS -d $1 --no-probe -o $1_sub; 
 
 
 	# Workdir
@@ -35,7 +33,8 @@ automate-recon (){ #> automate-recon target.com
 	  ./URLs/allurls-temp.txt | sort -u > ./URLs/allurls.txt; rm ./URLs/allurls-temp.txt;
 
 	  # Removing duplicate parameter value & Delete uri containing extension ---> ./URLs/allurls-juicy.txt
-	  cat ./URLs/allurls.txt | grep -P "=" | sed "/\b\(jpg\|JPG\|jpeg\|png\|doc\|PNG\|SVG\|svg\|pdf\|PDF\|ttf\|eot\|cssx\|css\|gif\|woff\|woff2\)\b/d" | \
+	  cat ./URLs/allurls.txt | grep -P "=" | \
+	  sed "/\b\(jpg\|JPG\|jpeg\|png\|doc\|PNG\|SVG\|svg\|pdf\|PDF\|ttf\|eot\|cssx\|css\|gif\|GIF\|ico\|woff\|woff2\)\b/d" | \
 	  tee output.txt; 
 	  for i in $(cat output.txt); do URL="${i}"; LIST=(${URL//[=&]/=FUZZ&}); echo ${LIST} | awk -F '=' -vOFS='=' '{$NF="FUZZ"}1;' \
 	  >> OutputParam.txt; done ; sort -u OutputParam.txt > ./URLs/allurls-juicy.txt ; rm OutputParam.txt output.txt;
@@ -46,7 +45,7 @@ automate-recon (){ #> automate-recon target.com
 	  	tee ./URLs/allurls-juicy-httprobes.txt; rm ./URLs/allurls-juicy-temp.txt allurls-juicy.txt;
 
 	  # Parameter list ---> ./URLs/params-uniq.txt
-	  cat ./URLs/allurls-juicy-httprobes.txt | grep -P "=" | tee output.txt; 
+	  cat ./URLs/allurls-juicy-httprobes.txt | grep -P "=" | grep -v '\?ver=' | tee output.txt; 
 	  for i in $(cat output.txt); do URL="${i}"; LIST=(${URL//[=&]/=FUZZ&}); echo ${LIST} | awk -F '=' -vOFS='=' '{$NF="FUZZ"}1;' \
 	  >> OutputParam.txt; done ; sort -u OutputParam.txt > ./URLs/params-uniq.txt; rm output.txt OutputParam.txt; 
 
@@ -59,28 +58,25 @@ automate-recon (){ #> automate-recon target.com
 	  	cat ./URLs/allurls.txt | unfurl keypairs | sort -u | tee ./URLs/onlyquerystrings.txt;
 
 	  # Passing parameters
-	  cat ./URLs/allurls.txt | grep "=" | egrep "\.jpg|\.JPG|\.png|\.PNG|\.pdf|\.doc" > OutputParam.txt;
+	  cat ./URLs/allurls.txt | grep "=" | egrep "\.txt|\.jpg|\.JPG|\.png|\.PNG|\.pdf|\.doc" > OutputParam.txt;
 	  for i in $(cat OutputParam.txt); do URL="${i}"; LIST=(${URL//[=&]/=FUZZ&}); echo ${LIST} | awk -F '=' -vOFS='=' '{$NF="FUZZ"}1;' \
-	  >> OutputParam2.txt; done ; sort -u OutputParam2.txt > ./URLs/passingparams.txt; 
-
-	  rm OutputParam.txt OutputParam2.txt;
+	  >> OutputParam2.txt; done; sort -u OutputParam2.txt > ./URLs/passingparams.txt; rm OutputParam.txt OutputParam2.txt;
 
 	  
 	# Colecting Juicy file : JS, JSON, etc > Downloading
-	  # Fetch .js,json,etc file from ./URLs/allurls-juicy.txt
-	  mkdir juicyfiles; mkdir ./juicyfiles/downloaded-juicyfiles;
-	  cat ./URLs/allurls-juicy.txt | egrep "\.js|\.json|\.txt|\.yml|\.toml|\.xml" | sed -e 's/https\?:\/\///g' | \
-	  httprobe -c 50 -prefer-https | sort -u | httpx -threads 100 -status-code -silent | tee ./juicyfiles/juicyfiles-temp.out; 
-	  cat ./juicyfiles/juicyfiles-temp.out | grep "200" | awk '{print $2" "$1}' | awk '{print $2}' | tee ./juicyfiles/juicyfiles-200-allurlsjuicy.out; 
+	mkdir juicyfiles; mkdir ./juicyfiles/downloaded-juicyfiles;
+
+	  # Fetch .js,json,etc file from ./URLs/allurls-juicy.txt  
+	  cat ./URLs/allurls.txt | egrep "\.js|\.json|\.txt|\.yml|\.toml|\.xml" | httpx -threads 100 -status-code -silent | \
+	  grep "200" | cut -d [ -f1 | tee ./juicyfiles/200-allurlsjuicy.out; 
 
 	  # Crawling JS files from given urls/subdomains
-	  cat ./URLs/allurls-juicy-httprobes.txt | getJS -complete -resolve | tee ./juicyfiles/juicyfiles-200-getjscrawling-temp.out;
-	  grep -vwE "(wp-content|sidebar)" ./juicyfiles/juicyfiles-200-getjscrawling-temp.out \
-	  | sort -u > ./juicyfiles/juicyfiles-200-getjscrawling.out; rm ./juicyfiles/juicyfiles-200-getjscrawling-temp.out;
+	  cat ./URLs/allurls-juicy-httprobes.txt | sort -u | getJS -complete -resolve | grep -vwE "(sidebar)" | \
+	  tee ./juicyfiles/200-getjscrawling.out
 
 	  # Downloading juicy files
-	  sort -u ./juicyfiles/juicyfiles-200-allurlsjuicy.out ./juicyfiles/juicyfiles-200-getjscrawling.out > ./juicyfiles/juicyfiles-200.out;
-	  cat ./juicyfiles/juicyfiles-200.out | parallel -j 20 wget -P ./juicyfiles/downloaded-juicyfiles --no-check-certificate ;
+	  sort -u ./juicyfiles/200-allurlsjuicy.out ./juicyfiles/200-getjscrawling.out > ./juicyfiles/alljuicyfiles.out;
+	  cat ./juicyfiles/200.out | parallel -j 20 wget -P ./juicyfiles/downloaded-juicyfiles --no-check-certificate;
 
 
 	# JS Files processing
@@ -100,7 +96,6 @@ automate-recon (){ #> automate-recon target.com
 
 
 	# WebAnalyzer
-	webanalyze -worker 10 -hosts httprobes.out -output csv | tee webanalyzes.out;
 	webanalyze -apps /root/resource/apps.json -worker 10 -hosts httprobes.out -output csv | tee webanalyzes.out;
 
 
@@ -123,14 +118,16 @@ automate-recon (){ #> automate-recon target.com
 	  rm paths hosts;
 	  
 	  # Filter 200 OK / 403 Forbidden results
-	  cat ./fetch-meg/fetch-custompaths/index | grep "403 Forbidden\|200 OK" | tee ./fetch-meg/200-403-fetch-custompaths-temp.out;
+	  cat ./fetch-meg/fetch-custompaths/index | grep "403 Forbidden\|200 OK" --color=always | tee ./fetch-meg/200-403-fetch-custompaths-temp.out;
 	  cat ./fetch-meg/200-403-fetch-custompaths-temp.out | awk '{print $3$4" "$2}' | tee ./fetch-meg/200-403-fetch-custompaths.out;
 	  rm ./fetch-meg/200-403-fetch-custompaths-temp.out;
-}
+
+	# Fetch / allurls-juicy-httprobes.txt > http response body > gf
+	# meg --header "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0" \
+	# -d 3000 -c 50 / ./URLs/allurls-juicy-httpx.txt; 
+	# mv ./out fetch-allurls-juicy-httpx; mv ./fetch-allurls-juicy-httpx ./fetch-meg/;
 
 
-automate-gf(){ 
-	
 	# Interesting common ::gf pattern:: parameter > Deeping Vulnerable testing
 	mkdir ./URLs/gf-juicydata; mkdir ./URLs/gf-juicydata/temp;
 	cp ./URLs/params-uniq-live.txt ./URLs/gf-juicydata/temp; cd ./URLs/gf-juicydata/temp;
@@ -158,6 +155,7 @@ automate-gf(){
 	mv ./URLs/gf-juicydata/ .;
 	find ./gf-juicydata -size  0 -print -delete;
 }
+
 
 
 # ------------------ (2) Security Testing -------------------- #
@@ -190,17 +188,11 @@ automate-testing (){
 	time parallel -j 50 --tag host {1} {2} :::: $1_cnames ::: 8.8.8.8 1.1.1.1 8.8.4.4 | tee ./automationtesting/takeover-dnslookup;
 	cat takeover-dnslookup | grep "NXDOMAIN" | awk '{print $4$7}' | tee ./automationtesting/takeover-NXDOMAIN; 
 
-	subjack -w $1_cnames -timeout 30 -ssl -o subjack-results -c /root/subjack-fingerprints.json -v 3; 
 	subjack -w $1_cnames -timeout 30 -ssl -o subjack-results -c /root/resource/subjack-fingerprints.json -v 3; 
 	cat subjack-results | awk '$0 !~ /Not Vulnerable/' | tee ./automationtesting/takeover-subjack;
 
 
 	# CRLF Injection > XSS, Cache-Poisoning
-	nuclei -t /root/nuclei-templates/vulnerabilities/crlf-injection.yaml -l httprobes.out -c 40 -silent -o ./automationtesting/crlf-vuln;
-
-
-	# Host Header Injection (x-forwarded-host) > Open Redirect
-	nuclei -t /root/nuclei-templates/vulnerabilities/x-forwarded-host-injection.yaml -l httprobes.out -c 40 -silent -o \
 	nuclei -t /root/resource/nuclei-templates/vulnerabilities/crlf-injection.yaml -l httprobes.out -c 40 -silent -o ./automationtesting/crlf-vuln;
 
 
@@ -210,7 +202,6 @@ automate-testing (){
 
 
 	# CORS Misconfig
-	nuclei -t /root/nuclei-templates/security-misconfiguration/basic-cors.yaml -l httprobes.out -c 40 -silent -o ./automationtesting/cors-vuln;
 	nuclei -t /root/resource/nuclei-templates/security-misconfiguration/basic-cors.yaml -l httprobes.out -c 40 -silent -o ./automationtesting/cors-vuln;
 
 
@@ -222,12 +213,9 @@ automate-testing (){
 	rm -rf ./out put.txt hosts;
 
 	# Open Redirect > SSRF
-	nuclei -t /root/nuclei-templates/security-misconfiguration/open-redirect.yaml -l httprobes.out -c 40 -silent -o ./automationtesting/cors-vuln
 	nuclei -t /root/resource/nuclei-templates/security-misconfiguration/open-redirect.yaml -l httprobes.out -c 40 -silent -o ./automationtesting/cors-vuln
 
 	# Directory Traversal | File inclusion
-
-	# Command Injection
 
 	# XSS Fuzzing 
 	  # [Reflected + Blind]
@@ -244,19 +232,15 @@ automate-testing (){
 	
 	# SQLI Fuzzing
 
+	# Command Injection
 
 	# Juicy Path & Endpoint Bruteforce
 	cat httprobes.out | parallel -j 10 --bar --shuf gobuster dir -u {} -t 20 \
-	-w /root/wordlist/dir/dirsearch.txt -l -e -r -k -q | tee ./automationtesting/gobuster;
-
-
-	# Other > Custom pattern
-		# nuclei -t /root/nuclei-templates/template/ -l httprobes.out -c 40 -silent -o <results>
 	-w /root/resource/wordlist/dir/dirsearch.txt -l -e -r -k -q | tee ./automationtesting/gobuster;
 
 
 	# Other > Custom pattern
-		# nuclei -t /root/resource/nuclei-templates/template/ -l httprobes.out -c 40 -silent -o <results>
+		# nuclei -t /root/nuclei-templates/template/ -l httprobes.out -c 40 -silent -o <results>
 		# >> New CVE, etc
 
 }
