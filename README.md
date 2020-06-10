@@ -1,4 +1,3 @@
-# resource
 ***bash_profile*** :: Automated reconnaissance wrapper - collecting juicy data & basic security testing (fuzzing)
 ```bash
 # Dependencies
@@ -11,27 +10,29 @@ unfurl, dalfox, gobuster, nuclei, subjack, retire.js
 - subdomain.out         -- subdomain list
 - subdomain-resolv.out  -- subdomain resolv result
 - ipresolv.out          -- ip resolv list from subdomain-resolv.out
-- httprobes.out         -- subdomain.out http probes
-- httpx-status.out      -- httprobes.out http status code
-- linkfinder.html       -- Discovery endpoint and parameter from JS files
 - cf-ipresolv.out       -- ipresolv.out Cloudflare scan
+- httprobes.out         -- subdomain.out http probes
+- httpx.out             -- httprobes.out http status code
+- ports-shodan.out      -- Passive port scanning ipresolv.out from shodan
 - ports-naabu.out       -- Active port scanning from cf-ipresolv.out
 - webanalyzes.out       -- Webanalyzer scan 
-- gowitness.html        -- gowitness report
+- linkfinder.html       -- Discovery endpoint and parameter from JS files
+- gowitness.html        -- gowitness screenshoter report
+- ./fetch-meg/fetch-custompaths        -- Fetch HTTP response headers & RAW body
 - ./URLs/allurls.txt                   -- Fetch url from WebArchive, CommonCrawl, UrlScanIO
-- ./URLs/allurls-juicy.txt             -- Remove duplicate parameter value uri & Delete uri containing extension 
-- ./URLs/allurls-juicy-httprobes.txt   -- allurls-juicy.txt probing
-- ./URLs/params-uniq-live.txt          -- Live (200 OK) parameter uri list
-- ./URLs/fuzz/fuzz-fileinclusion       -- Parameter uri > File inclusion fuzzing
-- ./fetch-meg/fetch-custompaths        -- Fetch 'HTTP response headers' & 'RAW body'
+- ./URLs/allurls-juicy-httprobes.txt   -- Removing duplicate parameter, junk uri + probing
+- ./URLs/params-uniq-live.txt          -- Live (200 OK) unique parameter uri list
+- ./gf-juicydata/gf-fileinclusion      -- gf fileinclusion pattern from params-uniq-live.txt
 - ./gf-juicydata/gf-redirect           -- gf redirect pattern from params-uniq-live.txt
 - ./gf-juicydata/gf-idor               -- gf idor pattern from params-uniq-live.txt
 - ./gf-juicydata/gf-sqli               -- gf sqli pattern from params-uniq-live.txt
 - ./gf-juicydata/gf-ssrf               -- gf ssrf pattern from params-uniq-live.txt
 - ./gf-juicydata/gf-ssti               -- gf ssti pattern from params-uniq-live.txt
 - ./juicyfiles/juicyfiles-httpx.out    -- Juicy files uri from ./URLs/allurls-juicy.txt + probing
-- ./juicyfiles/juicyfiles-200.out      -- Juicy files uri live (200 OK) from ./juicyfiles/juicyfiles-httpx.out 
-- ./juicyfiles/downloaded-juicyfiles   -- Downloaded Juicy files
+- ./juicyfiles/200-allurlsjuicy.out    -- Juicy files (js,json,toml,etc) from allurls.txt
+- ./juicyfiles/200-getjscrawling.out   -- Juicy files (js,json,toml,etc) from active crawling ./URLs/allurls-juicy-httprobes.txt
+- ./juicyfiles/alljuicyfiles.out       -- Juicy files 200-allurlsjuicy.out + 200-getjscrawling.out
+- ./juicyfiles/downloaded-juicyfiles/  -- Downloaded Juicy files
 ```
 
 ### Security Testing [Fuzzing]
