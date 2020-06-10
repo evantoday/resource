@@ -116,11 +116,10 @@ automate-recon (){ #> automate-recon target.com
 	  meg --header "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:77.0) Gecko/20100101 Firefox/77.0" -d 3000 -c 50 \
 	  paths hosts ./fetch-meg/fetch-custompaths;
 	  rm paths hosts;
-	  
+
 	  # Filter 200 OK / 403 Forbidden results
-	  cat ./fetch-meg/fetch-custompaths/index | grep "403 Forbidden\|200 OK" --color=always | tee ./fetch-meg/200-403-fetch-custompaths-temp.out;
-	  cat ./fetch-meg/200-403-fetch-custompaths-temp.out | awk '{print $3$4" "$2}' | tee ./fetch-meg/200-403-fetch-custompaths.out;
-	  rm ./fetch-meg/200-403-fetch-custompaths-temp.out;
+	  cat ./fetch-meg/fetch-custompaths/index | grep "403 Forbidden\|200 OK" --color=yes | awk '{print $3$4" "$2}' | \
+	  tee ./fetch-meg/200-403-fetch-custompaths.out;
 
 	# Fetch / allurls-juicy-httprobes.txt > http response body > gf
 	# meg --header "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0" \
@@ -151,8 +150,7 @@ automate-recon (){ #> automate-recon target.com
 	  # --- SSTI ---
 	  unbuffer gf ssti | sed 's/http/\nhttp/g' | grep ^http | sed 's/\(^http[^ <]*\)\(.*\)/\1/g' | sort -u > ../fuzz-ssti;
 
-	cd ../../../; rm -rf ./URLs/gf-juicydata/temp;
-	mv ./URLs/gf-juicydata/ .;
+	cd ../../../; rm -rf ./URLs/gf-juicydata/temp; mv ./URLs/gf-juicydata/ .;
 	find ./gf-juicydata -size  0 -print -delete;
 }
 
